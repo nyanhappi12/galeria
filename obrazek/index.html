@@ -1,1 +1,569 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NyanHappi12 — Galeria — Obraz</title>
 
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Luckiest+Guy&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+  <style>
+    /* --- (SKOPIOWANE STYLE z Twojego motywu; zachowane wszystkie wyglądy) --- */
+    :root{
+      --bg:#071225; --card:rgba(255,255,255,0.95); --muted:#9aa4b2;
+      --accent-1:#ff6fb5; --accent-2:#7c4dff;
+    }
+    [data-theme="light"]{ --bg:#f7fbf8; --card:#ffffff; --muted:#55606a; }
+
+    html,body{height:100%}
+    body{
+      margin:0;font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: linear-gradient(180deg,#071225 0%, #021017 100%); color: #fff;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    [data-theme="light"] body{ background: linear-gradient(180deg,#f8fafc 0%, #ffffff 100%); color:#0b1220; }
+
+    /* Topbar, Drawer, Hero, Content, Buttons - identyczne jak na reszcie strony */
+    .topbar{position:fixed;left:20px;right:20px;top:16px;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+    .brand img{width:56px;height:56px;border-radius:999px;object-fit:cover;border:2px solid rgba(255,255,255,0.06)}
+    .brand .title{font-weight:700;font-size:20px}
+    .menu-btn{width:48px;height:48px;display:grid;place-items:center;border-radius:999px;background:rgba(255,255,255,0.08);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08);cursor:pointer;color:#fff}
+    [data-theme="light"] .menu-btn{ color:#0b1220; background:rgba(0,0,0,0.06); border:1px solid rgba(0,0,0,0.08) }
+
+    .drawer-wrap{position:fixed;inset:0;z-index:50;pointer-events:none}
+    .drawer-backdrop{position:absolute;inset:0;background:rgba(2,6,23,0.45);opacity:0;transition:opacity .35s;pointer-events:none}
+    .drawer{position:fixed;left:0;top:0;height:100%;width:360px;max-width:85%;padding:22px;transform:translateX(-110%);transition:transform .6s cubic-bezier(.2,.9,.2,1);backdrop-filter: blur(8px);border-right:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));pointer-events:auto;color:inherit}
+    .drawer-wrap.open .drawer{ transform:translateX(0); transition-duration:2200ms } 
+    .drawer .close{position:absolute;right:12px;top:12px;width:36px;height:36px;border-radius:999px;display:grid;place-items:center;cursor:pointer}
+    .drawer nav a{display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;color:inherit;text-decoration:none;margin-bottom:6px}
+    .drawer nav a:hover{background:rgba(255,255,255,0.03)}
+
+    .hero{min-height:36vh;display:flex;align-items:center;justify-content:center;padding:92px 20px 40px 20px;background-size:cover;background-position:center}
+    .hero .card{max-width:980px;width:100%;padding:26px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));text-align:center;backdrop-filter: blur(6px)}
+    [data-theme="light"] .hero .card{ background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9)); }
+
+    .content{ border:1px solid rgba(255,255,255,0.06); background:var(--card); box-shadow:0 12px 40px rgba(2,6,23,0.6); transition:all .28s; max-width:1100px;margin:-36px auto 80px;border-radius:20px;padding:28px;color:inherit }
+
+    .image-wrap{ display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap }
+    .image-card{ flex:1 1 540px; border-radius:14px; overflow:hidden; background:linear-gradient(180deg, rgba(0,0,0,0.04), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04) }
+    .image-card img{ width:100%; height:auto; display:block; max-height:80vh; object-fit:contain; background:#111 }
+
+    .meta-panel{ width:360px; min-width:260px; border-radius:14px; padding:18px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04) }
+    .meta-panel .title{ font-size:18px; font-weight:700; margin-bottom:8px }
+    .meta-panel .line{font-size:14px;color:var(--muted); margin-bottom:8px }
+    .meta-panel a.owner{ color:inherit; text-decoration:none; font-weight:600 }
+    .meta-panel .actions{ margin-top:14px; display:flex; gap:10px; align-items:center }
+
+    .cta{ display:inline-block; padding:12px 18px; border-radius:999px; font-weight:600; text-decoration:none; border:1px solid rgba(255,255,255,0.06); background:transparent; color:inherit; cursor:pointer; transition:all .22s }
+    .cta.gradient{ background: linear-gradient(90deg,var(--accent-1),var(--accent-2)); color:#fff; border:0 }
+    .btn-download{ padding:10px 14px; border-radius:999px; font-weight:600; border:1px solid rgba(255,255,255,0.06); background:transparent; cursor:pointer }
+    .btn-download[disabled]{ opacity:0.45; cursor:not-allowed }
+
+    /* toast */
+    .toast{
+      position:fixed; left:50%; top:22%; transform:translateX(-50%); z-index:90;
+      background:linear-gradient(90deg, rgba(0,0,0,0.8), rgba(10,10,20,0.95));
+      color:#fff; padding:12px 16px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.6);
+      opacity:0; pointer-events:none; transition:opacity .2s;
+    }
+    .toast.show{ opacity:1; pointer-events:auto }
+
+    /* countdown sticky */
+    .countdown{ position:fixed; right:18px; bottom:18px; z-index:60; width:220px; border-radius:14px; padding:12px; background:linear-gradient(180deg,rgba(255,255,255,0.04), rgba(255,255,255,0.02)); backdrop-filter: blur(6px); border:1px solid rgba(255,255,255,0.06); text-align:center}
+    .countdown .time{ font-family:monospace; font-size:20px; margin-top:6px }
+
+    footer{ text-align:center; color:var(--muted); padding:30px 12px; font-size:13px }
+
+    @media (max-width:1000px){ .image-wrap{ flex-direction:column } .meta-panel{ width:100% } .image-card{ order: -1 } }
+    .material-symbols-rounded{ font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; font-size:22px; line-height:1 }
+    /* ochrona obrazu przed przytrzymaniem/prawym klikiem/drag */
+.image-card { position: relative; overflow: hidden; }
+.image-card img {
+  display:block;
+  width:100%;
+  height:auto;
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none; /* iOS long-press menu */
+  pointer-events: none; /* uniemożliwia bezpośrednie interakcje z tagiem <img> */
+  draggable: false;
+}
+/* przezroczysta nakładka — przechwytuje dotknięcia / prawy klik / przytrzymanie */
+.image-protect{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  background:transparent;
+  cursor:default;
+  /* jeśli chcesz żeby dotknięcie obrazka przenosiło gdzieś, tu możesz obsłużyć eventy */
+}
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <a id="home-link" class="brand" href="/index.html" title="NyanHappi12 — Strona główna">
+      <img id="logo-img" src="https://nyanhappi12.neocities.org/site_files/Copilot_20251213_004258_11zon (1).png" alt="logo">
+      <div>
+        <div class="title">NyanHappi12 <span class="logo-small">☆</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Galeria — Podgląd obrazka</div>
+      </div>
+    </a>
+
+    <div style="display:flex;gap:10px;align-items:center">
+      <button id="menu-open" class="menu-btn" aria-label="Otwórz menu" title="Menu">
+        <svg width="18" height="14" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- DRAWER -->
+  <div id="drawerWrap" class="drawer-wrap" aria-hidden="true">
+    <div id="drawerBackdrop" class="drawer-backdrop"></div>
+    <aside class="drawer" role="dialog" aria-modal="true" aria-label="Nawigacja">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px">
+        <img id="drawer-logo" src="https://nyanhappi12.neocities.org/site_files/Copilot_20251213_004258_11zon (1).png" style="width:56px;height:56px;border-radius:999px;object-fit:cover">
+        <div><div style="font-weight:700">NyanHappi12</div><div style="font-size:12px;color:var(--muted)">Witaj! wybierz stronę</div></div>
+      </div>
+      <nav>
+        <a href="/filmy/"><span class="material-symbols-rounded">smart_display</span>Najnowsze Filmy</a>
+        <a href="/galeria/"><span class="material-symbols-rounded">photo_library</span>Galeria Obrazów</a>
+        <a href="/wydarzenia/"><span class="material-symbols-rounded">schedule</span>Odliczanie Do Wydarzeń</a>
+        <a href="/posty/"><span class="material-symbols-rounded">article</span>Posty</a>
+        <a id="account-link" href="/login/"><span class="material-symbols-rounded">account_circle</span>Konto</a>
+        <a href="/informacje-kontaktowe/"><span class="material-symbols-rounded">contact_mail</span>Informacje & Kontakt</a>
+      </nav>
+
+      <div style="margin-top:18px;font-size:13px;color:var(--muted)">Motyw:</div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button id="theme-light" class="cta" style="padding:8px 10px">Jasny</button>
+        <button id="theme-dark" class="cta gradient" style="padding:8px 10px">Ciemny</button>
+      </div>
+
+      <div style="margin-top:14px;font-size:12px;color:var(--muted)">Motyw zapisany lokalnie; jeśli jesteś zalogowany, motyw zostanie zapisany do Firestore.</div>
+    </aside>
+  </div>
+
+  <!-- HERO -->
+  <main>
+    <section id="hero" class="hero" style="background-image:url('https://via.placeholder.com/1600x600?text=Galeria')">
+      <div class="card">
+        <h1>Podgląd obrazka</h1>
+        <p>Pełne dane i pobieranie (jeśli masz uprawnienia).</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <div id="status" style="margin-bottom:12px;color:var(--muted)"></div>
+
+      <div class="image-wrap">
+        <div class="image-card" id="imageCard">
+          <!-- image will be injected here -->
+          <img id="mainImage" alt="Obraz" src="/site_files/placeholder.png" onerror="this.onerror=null;this.src='/site_files/placeholder.png'">
+          <!-- wkleić TU (bezpośrednio po <img id="mainImage" ...>) -->
+<div class="image-protect" aria-hidden="true"></div>
+        </div>
+
+        <aside class="meta-panel" id="metaPanel">
+          <div class="title" id="imgTitle">Ładowanie...</div>
+          <div class="line">Właściciel: <a id="imgOwner" class="owner" href="#">—</a></div>
+          <div class="line">Dodano: <span id="imgUploaded">—</span></div>
+          <div class="line">Wyświetlenia: <span id="imgViews">0</span></div>
+          <div class="line">Pobieranie: <span id="imgDownloadPerm">—</span></div>
+
+          <div class="actions">
+            <button id="btnDownload" class="btn-download" disabled><span class="material-symbols-rounded">download</span> Pobierz</button>
+            <a id="btnOpenYoutube" class="cta" href="#" target="_blank" rel="noopener" style="display:none">Otwórz w nowej karcie</a>
+          </div>
+
+          <div style="margin-top:12px; color:var(--muted); font-size:13px">Kliknij właściciela, żeby przejść do profilu.</div>
+        </aside>
+      </div>
+    </section>
+
+    <footer>
+      <div>© 2026 NyanHappi12 — wszelkie prawa zastrzeżone.</div>
+      <div style="margin-top:6px;font-size:12px">Motyw: <span id="footer-theme">ciemny</span></div>
+    </footer>
+  </main>
+
+  <!-- toast -->
+  <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+
+  <!-- countdown -->
+  <div id="countdown" class="countdown" role="status" aria-live="polite">
+    <div style="font-size:12px;font-weight:600">Do następnego odcinka zostało:</div>
+    <div id="countdown-value" class="time">--:--:--</div>
+  </div>
+
+  <!-- SCRIPT: Firebase + page logic -->
+  <script type="module">
+    // ---------- CONFIG ----------
+    const CONFIG = {
+      CLOUDINARY: { cloudName: '226846279479333', unsignedPreset: 'NyanHappi' },
+      FIREBASE: {
+        apiKey: "AIzaSyA6B1a0I1m7hXPwblW8diKsW1nnDVmGEP0",
+        authDomain: "nyanhappi12.firebaseapp.com",
+        projectId: "nyanhappi12",
+        storageBucket: "nyanhappi12.firebasestorage.app",
+        messagingSenderId: "197042141276",
+        appId: "1:197042141276:web:d9f1c73f569f9180a40e99",
+        measurementId: "G-RW1PDZR1X5"
+      },
+      YOUTUBE: { API_KEY: "AIzaSyCrdS7Sou5-VsrHTZAgsPA3SSCJP8qHrQk", HANDLE: "@nyanhappi12_cute" }
+    };
+
+    // ---------- FIREBASE IMPORTS ----------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+    const firebaseApp = initializeApp(CONFIG.FIREBASE);
+    try { getAnalytics(firebaseApp); } catch(e){ /* optional */ }
+    const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
+    const provider = new GoogleAuthProvider();
+
+    // ---------- DOM refs ----------
+    const drawerWrap = document.getElementById('drawerWrap');
+    const menuOpen = document.getElementById('menu-open');
+    const drawerClose = document.getElementById('drawerClose');
+    const drawerBackdrop = document.getElementById('drawerBackdrop');
+    const accountLink = document.getElementById('account-link');
+    const logoImg = document.getElementById('logo-img');
+    const drawerLogo = document.getElementById('drawer-logo');
+    const hero = document.getElementById('hero');
+
+    const statusEl = document.getElementById('status');
+    const mainImage = document.getElementById('mainImage');
+    const imgTitle = document.getElementById('imgTitle');
+    const imgOwner = document.getElementById('imgOwner');
+    const imgUploaded = document.getElementById('imgUploaded');
+    const imgViews = document.getElementById('imgViews');
+    const imgDownloadPerm = document.getElementById('imgDownloadPerm');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnOpenYoutube = document.getElementById('btnOpenYoutube');
+    const toast = document.getElementById('toast');
+    const countdownEl = document.getElementById('countdown-value');
+
+    // placeholders
+    const defaultLogo = 'https://nyanhappi12.github.io/site_files/Copilot_20251213_004258.png';
+    const defaultHero = 'https://via.placeholder.com/1600x600?text=Galeria';
+    if(logoImg) logoImg.src = defaultLogo;
+    if(drawerLogo) drawerLogo.src = defaultLogo;
+    if(hero) hero.style.backgroundImage = `url('${defaultHero}')`;
+
+    // THEME
+    const THEME_KEY = 'nh_theme';
+    function applyTheme(theme, persistToFirestore = true){
+      const t = theme === 'light' ? 'light' : 'dark';
+      try{ document.documentElement.setAttribute('data-theme', t); }catch(e){}
+      try{ document.body.setAttribute('data-theme', t); }catch(e){}
+      try{ localStorage.setItem(THEME_KEY, t); }catch(e){}
+      if(persistToFirestore && accountDoc && accountDoc.id){
+        try{ setDoc(doc(db,'accounts',accountDoc.id), { theme: t }, { merge: true }).catch(()=>{}); }catch(e){}
+      }
+    }
+    const saved = (()=>{ try{return localStorage.getItem(THEME_KEY)}catch(e){return null} })() || 'dark';
+    applyTheme(saved, false);
+    document.getElementById('theme-light').onclick = ()=>applyTheme('light');
+    document.getElementById('theme-dark').onclick = ()=>applyTheme('dark');
+    // ----- REPLACEMENT: drawer open/close + outside click handling -----
+
+function openDrawer(){
+  // pokaż drawer
+  drawerWrap?.classList.add('open');
+  drawerWrap?.setAttribute('aria-hidden','false');
+
+  // doczepiamy listener dopiero *po* otwarciu, żeby kliknięcie, które otworzyło menu,
+  // nie powodowało jego natychmiastowego zamknięcia
+  setTimeout(() => {
+    // używamy pointerdown (obsługuje dotyk + mysz) oraz touchstart jako fallback
+    document.addEventListener('pointerdown', outsideDrawerHandler);
+    document.addEventListener('touchstart', outsideDrawerHandler);
+    document.addEventListener('keydown', escCloseHandler);
+  }, 0);
+}
+
+function closeDrawer(){
+  drawerWrap?.classList.remove('open');
+  drawerWrap?.setAttribute('aria-hidden','true');
+
+  // sprzątamy
+  document.removeEventListener('pointerdown', outsideDrawerHandler);
+  document.removeEventListener('touchstart', outsideDrawerHandler);
+  document.removeEventListener('keydown', escCloseHandler);
+}
+
+// zamykaj po ESC
+function escCloseHandler(e){
+  if(e.key === 'Escape' || e.key === 'Esc') closeDrawer();
+}
+
+// centralny handler — zamyka, jeśli klik poza drawerem i poza przyciskiem otwierającym
+function outsideDrawerHandler(e){
+  // jeśli drawer już zamknięty, nic nie rób
+  if(!drawerWrap || !drawerWrap.classList.contains('open')) return;
+
+  const drawerEl = drawerWrap.querySelector('.drawer');
+  const target = e.composedPath ? e.composedPath()[0] : e.target;
+
+  // jeśli kliknięto _wewnątrz_ drawer -> nic
+  if(drawerEl && drawerEl.contains(target)) return;
+
+  // jeśli kliknięto w przycisk otwierający menu -> nic
+  if(menuOpen && menuOpen.contains(target)) return;
+
+  // jeżeli kliknięto element, który jawnie zabrania zamykania (atrybut data-no-close) -> nic
+  // (opcjonalne, możesz dodać data-no-close do elementów które nie powinny zamykać)
+  let el = target;
+  while(el){
+    if(el.nodeType === 1 && el.hasAttribute && el.hasAttribute('data-no-close')) return;
+    el = el.parentElement;
+  }
+
+  // w przeciwnym razie zamknij
+  closeDrawer();
+}
+
+// podpięcia - zastąp swoje stare addEventListener'y tymi
+menuOpen?.addEventListener('click', (ev)=>{
+  // zapobiegamy bąblowaniu żeby nie wywołać outsideDrawerHandler natychmiast
+  ev.stopPropagation();
+  openDrawer();
+});
+
+drawerClose?.addEventListener('click', (ev)=>{
+  ev.stopPropagation();
+  closeDrawer();
+});
+
+// Backdrop jako dodatkowy mechanizm (może pozostać)
+drawerBackdrop?.addEventListener('click', (ev)=>{
+  ev.stopPropagation();
+  closeDrawer();
+});
+
+
+    // Auth state & accountLink UI
+    let accountDoc = null;
+    onAuthStateChanged(auth, async (user)=>{
+      if(user){
+        const docRef = doc(db,'accounts', user.uid);
+        try{
+          const snap = await getDoc(docRef);
+          if(!snap.exists()){
+            await setDoc(docRef, { display_name: user.displayName || user.email || 'Użytkownik', createdAt: new Date().toISOString() });
+            accountDoc = { display_name: user.displayName || user.email || 'Użytkownik', id: user.uid };
+          } else {
+            accountDoc = { id: snap.id, ...snap.data() };
+          }
+          if(accountLink){ accountLink.innerHTML = `<span class="material-symbols-rounded">account_circle</span>${accountDoc.display_name || 'Konto'}`; accountLink.href=`/konto/${accountDoc.id}`; }
+          try{ if(accountDoc && accountDoc.theme) applyTheme(accountDoc.theme, false); }catch(e){}
+          try{ const u = new URL(window.location.href); u.searchParams.set('session_id', accountDoc.id); window.history.replaceState({}, '', u.toString()); }catch(e){}
+        }catch(e){ console.error(e) }
+      } else {
+        accountDoc = null;
+        if(accountLink){ accountLink.innerHTML = `<span class="material-symbols-rounded">account_circle</span>Konto`; accountLink.href = '/login/'; }
+        try{ const u = new URL(window.location.href); u.searchParams.delete('session_id'); window.history.replaceState({}, '', u.toString()); }catch(e){}
+      }
+    });
+
+    accountLink?.addEventListener('click', async (e)=>{
+      const user = auth.currentUser;
+      if(!user){ e.preventDefault(); try{ await signInWithPopup(auth, provider); }catch(err){ alert('Błąd logowania: ' + (err && err.message || err)); } }
+    });
+    accountLink?.addEventListener('contextmenu', async (ev)=>{ ev.preventDefault(); if(confirm('Wylogować?')){ await signOut(auth); alert('Wylogowano'); } });
+
+    // ---------- helpers ----------
+    function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function buildSiteFileUrl(id){
+      if(!id) return '';
+      if(/^https?:\/\//i.test(id)) return id;
+      let path = id;
+      if(path.startsWith('/site_files/')) path = path.slice('/site_files/'.length);
+      const segments = path.split('/').map(seg => encodeURIComponent(seg));
+      return '/site_files/' + segments.join('/');
+    }
+
+    function showToast(message, seconds = 5){
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(()=> toast.classList.remove('show'), seconds*1000);
+    }
+
+    // countdown (daily 21:00 Poland local)
+    (function countdown(){
+      function getNext(){
+        const now = new Date();
+        // Poland timezone might be CET/CEST; using local time is acceptable here per earlier pages
+        const next = new Date(now);
+        next.setHours(21,0,0,0);
+        if(next <= now) next.setDate(next.getDate()+1);
+        return next;
+      }
+      function update(){
+        const t = getNext() - Date.now();
+        if(t <= 0){ countdownEl.textContent = '00:00:00'; return; }
+        const h = Math.floor(t/3600000);
+        const m = Math.floor((t%3600000)/60000);
+        const s = Math.floor((t%60000)/1000);
+        countdownEl.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }
+      update(); setInterval(update,1000);
+    })();
+
+    // ---------- Main: read ?name=ID and show image ----------
+(async function showImageFromQuery(){
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('name') || params.get('id') || params.get('file') || '';
+      if(!id){
+        statusEl.textContent = 'Brak parametru name w URL (np. ?name=obraz (1).png).';
+        imgTitle.textContent = 'Brak obrazu';
+        return;
+      }
+      statusEl.textContent = `Ładowanie danych dla: ${id}`;
+
+      try{
+        const docRef = doc(db, 'images_metadata', id);
+        const snap = await getDoc(docRef);
+        if(!snap.exists()){
+          // If doc missing, still attempt to show file in /site_files/
+          const fallbackUrl = buildSiteFileUrl(id);
+          mainImage.src = fallbackUrl;
+          imgTitle.textContent = id;
+          imgOwner.textContent = '—';
+          imgOwner.href = `/profil/—`;
+          imgUploaded.textContent = '—';
+          imgViews.textContent = '—';
+          imgDownloadPerm.textContent = 'Nieznane';
+          btnDownload.disabled = true;
+          statusEl.textContent = 'Brak metadanych w Firestore — pokazuję plik z /site_files/ (jeśli istnieje).';
+          return;
+        }
+
+        const data = snap.data() || {};
+        const title = data.name || id;
+        const owner = data.Owner || data.Username || '—';
+        // uploaded parsing
+        let uploaded = '';
+        try{
+          const ur = data.Uploaded;
+          if(ur && typeof ur.toDate === 'function') uploaded = ur.toDate().toLocaleString();
+          else if(typeof ur === 'string') uploaded = new Date(ur).toLocaleString();
+          else if(ur) uploaded = new Date(ur).toLocaleString();
+        }catch(e){ uploaded = '' }
+
+        const views = (typeof data.views !== 'undefined') ? String(data.views) : '0';
+        const downloadPerm = !!data.download_permission;
+        const imageURL = (data.imageURL && String(data.imageURL).trim()) ? String(data.imageURL).trim() : '';
+
+        // prefer imageURL else construct from id
+        const imgSrc = imageURL ? ( /^https?:\/\//i.test(imageURL) ? imageURL : buildSiteFileUrl(imageURL) ) : buildSiteFileUrl(id);
+
+        // populate UI
+        mainImage.src = imgSrc;
+        imgTitle.textContent = title;
+        imgOwner.textContent = owner;
+        imgOwner.href = `/profil/${encodeURIComponent(owner)}`;
+        imgUploaded.textContent = uploaded || '—';
+        imgViews.textContent = views;
+        imgDownloadPerm.textContent = downloadPerm ? 'Dozwolone' : 'Zablokowane';
+        btnDownload.disabled = !downloadPerm; // initially disabled if not allowed
+
+        // show 'open in new' if external source (optional)
+        btnOpenYoutube.style.display = 'none'; // not needed here; kept for parity
+
+        statusEl.textContent = '';
+
+        // click on owner goes to profile (already anchor)
+
+        // download logic
+        btnDownload.addEventListener('click', async (ev)=>{
+          ev.preventDefault();
+          // if download disabled
+          if(!downloadPerm){
+            showToast('Nie masz uprawnień do pobrania tego pliku (nie masz permission lub nie jesteś zalogowany).', 5);
+            return;
+          }
+          const user = auth.currentUser;
+          if(!user){
+            // ask to login
+            if(confirm('Aby pobrać obraz, musisz się zalogować. Zalogować teraz?')){
+              try{ await signInWithPopup(auth, provider); }catch(err){ alert('Błąd logowania: ' + (err && err.message || err)); return; }
+            } else {
+              // show toast
+              showToast('Nie możesz pobrać pliku bez zalogowania.', 5);
+              return;
+            }
+          }
+          // after login, re-check current user & downloadPerm
+          const finalUser = auth.currentUser;
+          if(!finalUser){ showToast('Logowanie nie powiodło się.', 4); return; }
+
+          // Start download (build safe URL)
+          const filename = id;
+          const downloadUrl = imageURL ? ( /^https?:\/\//i.test(imageURL) ? imageURL : buildSiteFileUrl(imageURL) ) : buildSiteFileUrl(filename);
+          // programmatic download
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+          // try to increment views (best-effort)
+          try{
+            const docRef2 = doc(db, 'images_metadata', id);
+            await updateDoc(docRef2, { views: increment(1) });
+            // update UI optimistically
+            imgViews.textContent = String(Number(imgViews.textContent || '0') + 1);
+          }catch(e){
+            // ignore permission errors
+            console.warn('Nie udało się zaktualizować views:', e);
+          }
+        });
+
+
+// --- OCHRONA OBRAZU (js) ---
+try {
+  // pewne zabezpieczenia na elemencie <img>
+  if (mainImage) {
+    mainImage.setAttribute('draggable', 'false');
+    mainImage.style.userSelect = 'none';
+    mainImage.style.webkitUserSelect = 'none';
+    mainImage.style.webkitTouchCallout = 'none';
+    mainImage.addEventListener('dragstart', e => e.preventDefault());
+    mainImage.addEventListener('contextmenu', e => e.preventDefault()); // blokuj prawy klik na samym <img>
+  }
+
+  // nakładka (jeśli już wstawiłeś <div class="image-protect"> to pobierz go)
+  const protectEl = document.querySelector('.image-card .image-protect');
+  if (protectEl) {
+    // blokuj prawy klik i long-press na nakładce
+    protectEl.addEventListener('contextmenu', e => e.preventDefault());
+    // touchstart z passive: false żeby móc preventDefault (blokuje long-press menu)
+    protectEl.addEventListener('touchstart', e => { e.preventDefault(); }, {passive:false});
+    // blokuj mousedown prawym przyciskiem
+    protectEl.addEventListener('mousedown', e => { if (e.button === 2) e.preventDefault(); });
+    // zapobiegaj gestom przeciągania
+    protectEl.addEventListener('dragstart', e => e.preventDefault());
+  }
+} catch(e) { console.warn('protect image init error', e); }
+
+      }catch(err){
+        console.error('load image error', err);
+        statusEl.textContent = 'Błąd przy ładowaniu metadanych. Sprawdź konsolę.';
+      }
+    })();
+
+  </script>
+</body>
+</html>
