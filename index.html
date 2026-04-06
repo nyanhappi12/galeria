@@ -475,7 +475,7 @@
       }
 
       // link do podstrony obrazka (bezpiecznie zakoduj parametr)
-      const pageHref = `/galeria/obrazek/name=${encodeURIComponent(id)}`;
+      const pageHref = `/galeria/obrazek/?name=${encodeURIComponent(id)}`;
 
       // stwórz kartę
       const a = document.createElement('a');
